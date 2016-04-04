@@ -3,12 +3,22 @@
 <head>
 	<title>Calculadora Online</title>
 	<link rel="stylesheet" type="text/css" href="calculator.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 	<script type="text/javascript" src="jquery-1.12.1.min.js"></script>
 	<script type="text/javascript" src="calculator.js"></script>
 </head>
 <body>
+	<div id="settingsDiv">
+		<h3>Customize your Calculator!</h3>
+		<p id="localStorage"></p>
+		<form id="settings">
+			<p>Calculator Color: <input type="text" id="calculatorBg"></p>
+			<p>Display Color: <input type="text" id="displayBg"></p>
+			<p>Buttons Color: <input type="text" id="buttonsColor"></p>
+		</form>
+	</div>
 	<div id="calculator">
-		<div>
+		<div id="displayContainer">
 			<p id="display"></p>
 		</div>
 		<div id="buttons">
@@ -28,7 +38,7 @@
 				<input type="button" class="number" id="1" value="1">
 				<input type="button" class="number" id="2" value="2">
 				<input type="button" class="number" id="3" value="3">
-				<input type="button" id="mult" value="x">
+				<input type="button" id="mult" value="*">
 			</p>
 			<p>
 				<input type="button" id="del" value="C">
@@ -39,6 +49,12 @@
 			<p>
 				<input type="button" id="equal" value="=">
 				<input type="button" id="ans" value="Ans">
+				<input type="button" id="decimals" value=".">
+
+			</p>
+			<p>
+				<input type="button" id="openBrackets" value="(">
+				<input type="button" id="closeBrackets" value=")">
 			</p>
 		</div>
 	</div>

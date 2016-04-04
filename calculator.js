@@ -1,3 +1,5 @@
+//CSS
+
 var ans = 0;
 var resutl = '';
 var solved = false;
@@ -6,8 +8,9 @@ var mayusDown = false;
 
 window.onload = function(){
 	console.log("loading");
+	setupLocalStorage();
 	display = $("#display");
-	$(".number").click(function(){
+	$(".number").click(function(e){
 		updateDisplay(this.value);
 	});
 	$("#add").click(function(){
@@ -22,6 +25,15 @@ window.onload = function(){
 	$("#divide").click(function(){
 		updateDisplay(this.value);
 	});
+	$("#decimals").click(function(){
+		updateDisplay(this.value);
+	});
+	$("#openBrackets").click(function(){
+		updateDisplay(this.value);
+	});
+	$("#closeBrackets").click(function(){
+		updateDisplay(this.value);
+	});
 	$("#del").click(function(){
 		deleteLast();
 	});
@@ -33,9 +45,45 @@ window.onload = function(){
 	});
 	$('#ans').click(function(){
 		updateDisplay(ans);
-	})
+	});
 	addEventListener("keydown", captureKeys, false);
 	addEventListener("keyup", releaseKeys, false);
+
+	$("#settings").on("input", setSettings);
+}
+
+function setSettings(){
+	var bgColor = $("#calculatorBg").val();
+	$("#calculator").css("background-color", bgColor);
+	localStorage['bgColor'] = bgColor;
+
+	var displayBg = $("#displayBg").val();
+	$("#displayContainer").css("background-color", displayBg);
+	localStorage['displayBg'] = displayBg;
+
+	var buttonsColor = $("#buttonsColor").val();
+	$("#buttons input").css("background-color", buttonsColor);
+	localStorage['buttonsColor'] = buttonsColor;
+}	
+
+function setupLocalStorage(){
+	if(Modernizr.localstorage){
+		$("#localStorage").html("Your settings will be saved for other session!");
+		setupSettings();
+	}else{
+		$("#localStorage").html("Your navigator do not support local storage");
+	}
+}
+
+function setupSettings(){
+	var bgColor = localStorage['bgColor'];
+	$("#calculator").css("background-color", bgColor);
+
+	var displayBg = localStorage['displayBg'];
+	$("#displayContainer").css("background-color", displayBg);
+
+	var buttonsColor = localStorage['buttonsColor'];
+	$("#buttons input").css("background-color", buttonsColor);
 }
 
 function captureKeys(e){
@@ -61,20 +109,28 @@ function captureKeys(e){
 		value = 6;
 	}else if((e.keyCode == 55 && !mayusDown) || e.keyCode == 103){
 		value = 7;
-	}else if(e.keyCode == 56 || e.keyCode == 104){
+	}else if((e.keyCode == 56 && !mayusDown) || e.keyCode == 104){
 		value = 8;
-	}else if(e.keyCode == 57 || e.keyCode == 105){
+	}else if((e.keyCode == 57 && !mayusDown) || e.keyCode == 105){
 		value = 9;
 	}else if((e.keyCode == 171 && !mayusDown) || e.keyCode == 107){
 		value = '+';
 	}else if(e.keyCode == 173 || e.keyCode == 109){
 		value = '-';
 	}else if(e.keyCode == 88 || e.keyCode == 106 || (e.keyCode == 171 && mayusDown)){
-		value = 'x';
-	}else if((e.keyCode == 57 && mayusDown) || e.keyCode == 111){
+		value = '*';
+	}else if((e.keyCode == 55 && mayusDown) || e.keyCode == 111){
 		value = '/';
+	}else if(e.keyCode == 190){
+		value = ".";
+	}else if(e.keyCode == 56 && mayusDown){
+		value = "(";
+	}else if(e.keyCode == 57 && mayusDown){
+		value = ")";
 	}else if(e.keyCode == 8){
 		deleteLast();
+	}else if(e.keyCode == 13){
+		solve();
 	}
 	if (value != null){
 		updateDisplay(value);
@@ -105,7 +161,7 @@ function reset(){
 }
 
 function isSymbol(value){
-	return (value == '+' || value == '-' || value == 'x' || value == '/');
+	return (value == '+' || value == '-' || value == '*' || value == '/');
 }
 
 function updateDisplay(value){
@@ -124,80 +180,8 @@ function updateDisplay(value){
 
 function solve(){
 	var operation = display.html();
-	var result = add(operation);
+	var result = eval(operation);
 	display.html(result);
 	ans = result;
 	solved = true;
-}
-
-function add(operation){
-	console.log("adding");
-	var operands = operation.split("+");
-	var result = 0;
-	for (var i = 0; i < operands.length; i++){
-		console.log("OP: " + operands[i])
-		result += substract(operands[i]);
-	}
-	return result;
-}
-
-function substract(operation){
-	console.log("substracting")
-	var result = 0;
-
-
-	var index = operation.indexOf("-")
-	if (index < 0){
-		result = multiply(operation);
-		return result;
-	}
-
-	var operands = operation.split("-");
-	var op1 = 0;
-
-	for (var i = 0; i < operands.length; i++){
-		if (i == 0){
-			if (index == 0){
-				op1 = -multiply(operands[i])
-			}else{
-				op1 = multiply(operands[i])
-			}
-			resutl = op1;
-		}else{
-			result = op1 - multiply(operands[i]);
-			op1 = result;
-		}
-		
-	}
-	return result;
-}
-
-function multiply(operation){
-	console.log("multiplying");
-	var operands = operation.split("x");
-	var result = 1;
-
-	for (var i = 0; i < operands.length; i++){
-		result = result * divide(operands[i]);
-	}
-	return result;
-}
-
-function divide(operation){
-	console.log("dividing");
-
-	var operands = operation.split("/");
-	var result = null;
-	var op1 = null;
-
-	for (var i = 0; i < operands.length; i++){
-		if (i == 0){
-			op1 = parseInt(operands[i]);
-			result = op1;
-		}else{
-			result = op1 / parseInt(operands[i]);
-			op1 = result;
-		}
-	}
-	return result;
 }
